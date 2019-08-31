@@ -91,11 +91,11 @@ const scanAndUpdate = async () => {
         if (newState.isOk) {
             // Backed online!
             await mBot.sendTalk(await mBot.getChannelId(NOTIFY_CHANNEL_NAME),
-                `:information_source: Server  ' *${newState.host}* '  is backed online! :tada:`);
+                `:information_source: Server  ' ${newState.host} '  is backed online! :tada:`);
         } else {
             // Went offline...
             await mBot.sendTalk(await mBot.getChannelId(NOTIFY_CHANNEL_NAME),
-                `:warning: Server  ' *${newState.host}* '  is went offline! Please check ASAP. :soon:`);
+                `:warning: Server  ' ${newState.host} '  is went offline! Please check ASAP. :soon:`);
         }
     });
     logger.debug('Done!');
