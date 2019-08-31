@@ -1,0 +1,24 @@
+{
+  "name": "alive-monitoring",
+  "version": "1.0.0",
+  "description": "A Rec0-bot plugin which does server alive monitoring",
+  "filter_prefixes": [
+    "check-alive"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc index.ts",
+    "clean": "rm -rf *.js node_modules",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "clvs7 (Arisaka Mashiro)",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@log4js-node/log4js-api": "^1.0.2",
+    "is-reachable": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^12.7.2",
+    "typescript": "^3.5.3"
+  }
+}
