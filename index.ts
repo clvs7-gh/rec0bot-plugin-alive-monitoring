@@ -1,7 +1,7 @@
 import { Logger } from '@log4js-node/log4js-api';
 import { Sema } from 'async-sema/lib';
 import * as fs from 'fs';
-import isReachable from 'is-reachable';
+import * as isReachable from 'is-reachable';
 import * as path from 'path';
 import { promisify } from 'util';
 import { BotProxy } from './bot-proxy.interface';
@@ -19,7 +19,6 @@ const STATES_JSON_FILENAME = 'states.json';
 const NOTIFY_CHANNEL_NAME = (process.env.REC0_ENV_ALIVE_MONITORING_NOTIFY_CHANNEL || '').trim() || 'general';
 const MONITORING_TARGETS = (process.env.REC0_ENV_ALIVE_MONITORING_TARGETS || '').split(',').map(i => i.trim())
     .filter(v => v.split(':').length === 2);
-const SCAN_INTERVAL_SEC = Number((process.env.REC0_ENV_ALIVE_MONITORING_INTERVAL_SEC || '60'));
 
 
 export const init = async (bot: BotProxy, options: { [key: string]: any }): Promise<void> => {
