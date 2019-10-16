@@ -1,11 +1,13 @@
 import { Logger } from '@log4js-node/log4js-api';
 import { Sema } from 'async-sema/lib';
 import * as fs from 'fs';
-import * as isReachable from 'is-reachable';
 import * as path from 'path';
+import * as rp from 'request-promise-native';
 import { promisify } from 'util';
 import { BotProxy } from './bot-proxy.interface';
 import { MessageContext } from './message-context.interface';
+
+const isReachable = require('is-reachable');
 
 let mBot: BotProxy;
 let logger: Logger;
@@ -19,7 +21,8 @@ const STATES_JSON_FILENAME = 'states.json';
 const NOTIFY_CHANNEL_NAME = (process.env.REC0_ENV_ALIVE_MONITORING_NOTIFY_CHANNEL || '').trim() || 'general';
 const MONITORING_TARGETS = (process.env.REC0_ENV_ALIVE_MONITORING_TARGETS || '').split(',').map(i => i.trim())
     .filter(v => v.split(':').length === 2);
-
+const NOTIFY_WHOOK_URL = (process.env.REC0_ENV_ALIVE_MONITORING_NOTIFY_WHOOK_URL || '').trim();
+const NOTIFY_WHOOK_TEMPLATE = (process.env.REC0_ENV_ALIVE_MONITORING_NOTIFY_WHOOK_TEMPLATE || '').trim();
 
 export const init = async (bot: BotProxy, options: { [key: string]: any }): Promise<void> => {
     mBot = bot;
@@ -90,12 +93,34 @@ const scanAndUpdate = async () => {
     await updateStates(results, async (newState: AvailabilityResult) => {
         if (newState.isOk) {
             // Backed online!
+            const mainText = `Server  ' ${newState.host} '  is backed online!`;
             await mBot.sendTalk(await mBot.getChannelId(NOTIFY_CHANNEL_NAME),
-                `:information_source: Server  ' ${newState.host} '  is backed online! :tada:`);
+                `:information_source: ${mainText} :tada:`);
+            if (NOTIFY_WHOOK_URL !== '' && NOTIFY_WHOOK_TEMPLATE !== '') {
+                try {
+                    await rp.post(NOTIFY_WHOOK_URL, {
+                        body: JSON.parse(NOTIFY_WHOOK_TEMPLATE.replace('[*MESSAGE*]', `**Yay!** ${mainText}`)),
+                        json: true
+                    });
+                } catch (e) {
+                    logger.error(e);
+                }
+            }
         } else {
             // Went offline...
+            const mainText = `Server  ' ${newState.host} '  is went offline! Please check ASAP.`;
             await mBot.sendTalk(await mBot.getChannelId(NOTIFY_CHANNEL_NAME),
-                `:warning: Server  ' ${newState.host} '  is went offline! Please check ASAP. :soon:`);
+                `:warning: ${mainText} :soon:`);
+            if (NOTIFY_WHOOK_URL !== '' && NOTIFY_WHOOK_TEMPLATE !== '') {
+                try {
+                    await rp.post(NOTIFY_WHOOK_URL, {
+                        body: JSON.parse(NOTIFY_WHOOK_TEMPLATE.replace('[*MESSAGE*]', `**Oops!** ${mainText}`)),
+                        json: true
+                    });
+                } catch (e) {
+                    logger.error(e);
+                }
+            }
         }
     });
     logger.debug('Done!');
