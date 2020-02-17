@@ -17,7 +17,7 @@ If you want to clean up built files, run `npm run clean`.
 - `REC0_ENV_ALIVE_MONITORING_NOTIFY_WHOOK_TEMPLATE`: (Optional) JSON Template Text. '[\*MESSAGE\*]' is replaced with notification message.
 
 ## Author
-clvs7 (Arisaka Mashiro)
+clvs7 (Arisaka Mayuki)
 
 ## License
 Apache License 2.0
